@@ -1,3 +1,4 @@
+import { Screen } from "expo-router/build/views/Screen";
 import React from "react";
 import {
   SafeAreaView,
@@ -7,27 +8,32 @@ import {
   View,
   Image,
 } from "react-native";
+import { router } from "expo-router";
+import { Colors } from "../src/constants/Colors";
 
-const WelcomeScreen = ({ navigation }) => {
+const WelcomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Welcome to Firebase : )</Text>
-
+      <Text style={styles.title}>Bienvenido a TucanCard</Text>
+      <Image
+        source={require("../assets/tucan-group-logo.png")}
+        style={styles.logo}
+      />
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          navigation.navigate("Login");
+          router.push("/LoginScreen");
         }}
       >
-        <Text style={styles.buttonText}>Sign In</Text>
+        <Text style={styles.buttonText}>Iniciar</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          navigation.navigate("SignUp");
+          router.push("/SignUpScreen");
         }}
       >
-        <Text style={styles.buttonText}>Sign Up</Text>
+        <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -38,7 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors.palette.primary,
     paddingHorizontal: 20,
   },
   logo: {
@@ -50,6 +56,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 30,
+    color: "#ffffff",
   },
   subtitle: {
     fontSize: 16,
@@ -57,7 +64,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   button: {
-    backgroundColor: "#007BFF",
+    backgroundColor: Colors.palette.secondary,
     width: "90%",
     paddingVertical: 15,
     marginHorizontal: 15,
@@ -69,6 +76,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
   },
 });
 
