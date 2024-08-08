@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
@@ -14,6 +13,7 @@ import { Colors } from "../src/constants/Colors";
 import { useAuth } from "../src/contexts/AuthContext";
 import { router } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
+import { TextInput } from "react-native-paper";
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +22,9 @@ const SignUpScreen = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const { loggedInUser, setLoggedInUser } = useAuth();
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [secureTextEntryRepeat, setSecureTextEntryRepeat] = useState(true);
+
 
   const CheckUserProfileCompleted = async () => {
     try {
@@ -65,25 +68,57 @@ const SignUpScreen = () => {
       <Text style={styles.title}>Sign Up</Text>
       <TextInput
         style={styles.input}
-        placeholder="Correo electronico"
+        placeholder="Ingrese su correo electronico"
         keyboardType="email-address"
         autoCapitalize="none"
         value={email}
+        label="Correo electronico"
+        placeholderTextColor="gray"
+        textColor="white"
+        theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
         onChangeText={(text) => setEmail(text)}
       />
       <TextInput
         style={styles.input}
-        placeholder="Clave"
-        secureTextEntry
+        placeholder="Ingrese su clave"
+        secureTextEntry={secureTextEntry}
         value={password}
+        label="Contraseña"
+        placeholderTextColor="gray"
+        textColor="white"
+        theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
         onChangeText={(text) => setPassword(text)}
+        right={
+          <TextInput.Icon
+            icon="eye"
+            color="white"
+            onPress={() => {
+              setSecureTextEntry(!secureTextEntry);
+              return false;
+            }}
+          />
+        }
       />
       <TextInput
         style={styles.input}
-        placeholder="Confirmar clave"
-        secureTextEntry
+        placeholder="Confirmar contraseña"
+        secureTextEntry={secureTextEntryRepeat}
         value={confirmPassword}
+        placeholderTextColor="gray"
+        label="Confirmar contraseña"
+        textColor="white"
+        theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
         onChangeText={(text) => setConfirmPassword(text)}
+        right={
+          <TextInput.Icon
+            icon="eye"
+            color="white"
+            onPress={() => {
+              setSecureTextEntryRepeat(!secureTextEntryRepeat);
+              return false;
+            }}
+          />
+        }
       />
       <TouchableOpacity onPress={handleSignUp} style={styles.button}>
         <Text style={styles.buttonText}>Registrarse</Text>
@@ -128,7 +163,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     color: "white",
     placeholderTextColor: "lightgray",
-    borderRadius: 20
+    borderRadius: 10
   },
   button: {
     backgroundColor: Colors.palette.secondary,   //naranja

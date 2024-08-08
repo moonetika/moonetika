@@ -9,7 +9,7 @@ import { useState } from "react";
 import { router } from "expo-router";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../src/firebase/config";
+import { authentication, db } from "../../src/firebase/config";
 import { useEffect } from "react";
 import {
   StyleSheet,
@@ -20,6 +20,9 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Button, Divider, Menu, Provider } from "react-native-paper";
+import { signOut } from "firebase/auth";
+
+
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -53,6 +56,17 @@ export default function TabLayout() {
     } catch (error) {
       console.log("[tabs] " + error);
     }
+  };
+
+  const signOutUser = () => {
+    signOut(authentication)
+      .then((res) => {
+        console.log("[index] logout" + res);
+        setLoggedInUser(null);
+      })
+      .catch((err) => {
+        console.log("[index] logout" + err);
+      });
   };
 
   const BackButton = () => {
@@ -135,12 +149,20 @@ export default function TabLayout() {
               zIndex: 100,
             }}
           >
-            <Menu.Item onPress={() => {}} title="Mi Perfil">
+            <Menu.Item
+              onPress={() => {
+                router.push("screens/Profile");
+              }}
+              title="Mi Perfil"
+            >
               <TabBarIcon name="person" color="black" />
             </Menu.Item>
             <Menu.Item onPress={() => {}} title="Ayuda" />
             <Divider />
-            <Menu.Item onPress={() => {}} title="Salir sesion" />
+            <Menu.Item
+              onPress={signOutUser}
+              title="Salir sesion"
+            />
           </Menu>
         </SafeAreaView>
       </Provider>
@@ -212,7 +234,7 @@ export default function TabLayout() {
           <Tabs.Screen
             name="Tracking"
             options={{
-              title: "Tracking",
+              title: "Seguimiento",
               tabBarIcon: ({ color, focused }) => (
                 <TabBarIcon
                   name={focused ? "reader" : "reader-outline"}
@@ -223,16 +245,16 @@ export default function TabLayout() {
           />
 
           <Tabs.Screen
-            name="Profile"
+            name="Appointment"
             options={{
-              title: "Perfil",
+              title: "Citas",
               tabBarIcon: ({ color, focused }) => (
                 <TabBarIcon
-                  name={focused ? "reader" : "reader-outline"}
+                  name={focused ? "calendar" : "calendar-outline"}
                   color={color}
                 />
               ),
-              href: isProfileCompleted ? "Profile" : null,
+              // href: isProfileCompleted ? "Profile" : null,
             }}
           />
         </Tabs>

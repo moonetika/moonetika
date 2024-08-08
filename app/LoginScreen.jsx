@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   Button,
   StyleSheet,
   Image,
@@ -17,8 +16,7 @@ import { Colors } from "../src/constants/Colors";
 
 import { useAuth } from "../src/contexts/AuthContext";
 import { collection, addDoc, setDoc, doc, getDoc } from "firebase/firestore";
-
-
+import { TextInput } from "react-native-paper";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = React.useState("");
@@ -30,8 +28,8 @@ const LoginScreen = ({ navigation }) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-
   const { loggedInUser, setLoggedInUser } = useAuth();
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const CheckUserProfileCompleted = async () => {
     try {
@@ -47,7 +45,7 @@ const LoginScreen = ({ navigation }) => {
       if (exists) {
         const userProfile = docSnap.data();
         ////console.log('[login] userProfile', userProfile)
-        setLoggedInUser({...loggedInUser, userProfile});
+        setLoggedInUser({ ...loggedInUser, userProfile });
       }
       setIsLoading(false);
     } catch (error) {
@@ -88,7 +86,10 @@ const LoginScreen = ({ navigation }) => {
         placeholder="Ingrese su correo electronico"
         keyboardType="email-address"
         autoCapitalize="none"
-        placeholderTextColor="#003f5c"
+        label="Correo electronico"
+        placeholderTextColor="gray"
+        textColor="white"
+        theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
         value={email}
         onChangeText={(email) => setEmail(email)}
       />
@@ -97,10 +98,23 @@ const LoginScreen = ({ navigation }) => {
         ref={passwordRef}
         style={styles.input}
         placeholder="Ingrese su clave"
-        placeholderTextColor="#003f5c"
+        placeholderTextColor="gray"
+        textColor="white"
+        theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
+        label="Contraseña"
         value={password}
-        secureTextEntry
+        secureTextEntry={secureTextEntry}
         onChangeText={(text) => setPassword(text)}
+        right={
+          <TextInput.Icon
+            icon="eye"
+            color="white"
+            onPress={() => {
+              setSecureTextEntry(!secureTextEntry);
+              return false;
+            }}
+          />
+        }
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -155,7 +169,7 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     color: "white",
     placeholderTextColor: "lightgray",
-    borderRadius: 20,
+    borderRadius: 10,
   },
   button: {
     backgroundColor: Colors.palette.secondary,

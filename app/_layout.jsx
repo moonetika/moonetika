@@ -67,6 +67,10 @@ export default function RootLayout() {
             name="screens/PerfilUpdateScreen"
             options={{ presentation: "modal", headerShown: false }}
           />
+          <Stack.Screen
+            name="screens/Profile"
+            options={{ presentation: "modal", headerShown: false }}
+          />
         </Stack>
       </ThemeProvider>
     );
