@@ -95,7 +95,8 @@ const ProfilePage = () => {
       });
       const userProfileMerged = { ...usuario, pictureFileName: fileName };
       SetUserProfileInfo(userProfileMerged, loggedInUser.uid);
-      setLoggedInUser({ ...loggedInUser, userProfileMerged });
+      const finalUser = { ...loggedInUser, profile: userProfileMerged }
+      setLoggedInUser(finalUser);
       return localUri; // Return the local path to the image
     } catch (error) {
       console.error("Error saving image:", error);
@@ -138,11 +139,8 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (loggedInUser) {
-      // console.log("stage: loggedInUser", loggedInUser);
       let userMerged = { ...loggedInUser.profile, ...usuario };
-      // console.log("[stage:]", userMerged);
       setUsuario(userMerged);
-      console.log("userMerged", userMerged);
       if (userMerged?.pictureFileName) {
         console.log(
           "filename",

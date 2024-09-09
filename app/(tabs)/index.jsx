@@ -99,14 +99,27 @@ export default function HomeScreen(props) {
     if (hasPermission === null) {
       return (
         <View style={styles.profileCompletedContainer}>
-          <Text>Requesting for camera permission</Text>
+          {isLoading && (
+            <View style={[styles.loadingContainer, styles.horizontal]}>
+              <ActivityIndicator
+                size="large"
+                color="white"
+                style={styles.container4}
+              />
+            </View>
+          )}
+          <Text style={{ color: "white" }}>
+            Requesting for camera permission
+          </Text>
         </View>
       );
     }
     if (hasPermission === false) {
       return (
         <View style={styles.profileCompletedContainer}>
-          <Text style={{ margin: 10 }}>No access to camera</Text>
+          <Text style={{ margin: 10, color: "white" }}>
+            No access to camera
+          </Text>
           <Button
             title={"Allow Camera"}
             onPress={() => askForCameraPermission()}
@@ -148,20 +161,30 @@ export default function HomeScreen(props) {
   const IncompleteProfileContent = () => {
     return (
       <View style={styles.withoutProfileCompletedContainer}>
-        <Text style={styles.title}>Bienvenido! {user?.email} </Text>
-        <Text style={styles.welcome}>
-          Tu cuenta ha sido creada exitosamente!
-        </Text>
-        <Text style={styles.welcome}>Porfavor completa tu perfil!</Text>
-        <TouchableOpacity
-          onPress={() => router.push("screens/PerfilUpdateScreen")}
-          style={styles.button}
-        >
-          <Text style={styles.signOutText}>Completar mi perfil</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={signOutUser} style={styles.button}>
-          <Text style={styles.signOutText}>Salir de Session</Text>
-        </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Image
+            source={require("../../assets/tucan-group-logo.png")}
+            style={styles.logo}
+          />
+          <View>
+            <Text style={styles.title}>Bienvenido! {user?.email} </Text>
+            <Text style={styles.welcome}>
+              Tu cuenta ha sido creada exitosamente!
+            </Text>
+          </View>
+        </View>
+        <View style={styles.withoutProfileCompletedContainer}>
+          <Text style={styles.welcome}>Porfavor completa tu perfil!</Text>
+          <TouchableOpacity
+            onPress={() => router.push("screens/PerfilUpdateScreen")}
+            style={styles.button}
+          >
+            <Text style={styles.signOutText}>Completar mi perfil</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={signOutUser} style={styles.button}>
+            <Text style={styles.signOutText}>Salir de Session</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -194,11 +217,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    // alignItems: "center",
     backgroundColor: Colors.palette.primary,
-    // borderColor: Colors.palette.tertiary,
-    // borderRadius: 10,
-    // borderWidth: 10,
   },
   loadingContainer: {
     flex: 1,
@@ -218,7 +237,10 @@ const styles = StyleSheet.create({
     flex: 8,
   },
   withoutProfileCompletedContainer: {
-    flex: 5,
+    flex: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "stretch",
   },
   blockInstruccion: {
     padding: 20,
