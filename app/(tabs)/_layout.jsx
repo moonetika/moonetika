@@ -19,10 +19,16 @@ import {
   Text,
   SafeAreaView,
 } from "react-native";
-import { Button, Divider, Menu, Provider } from "react-native-paper";
+import {
+  Button,
+  Divider,
+  IconButton,
+  Menu,
+  Provider,
+} from "react-native-paper";
 import { signOut } from "firebase/auth";
-
-
+import FloatingWhatsAppButton from "../../src/components/WhatsappButton";
+import WhatsAppButton from "../../src/components/WhatsappButton";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -77,6 +83,7 @@ export default function TabLayout() {
             alignItems: "center",
             flexDirection: "row",
             justifyContent: "center",
+            paddingLeft: 10,
           }}
           onPress={() => {
             if (router.canGoBack()) {
@@ -92,80 +99,24 @@ export default function TabLayout() {
     );
   };
 
-  const ThreeDotsButton = () => {
+  const ProfileButton = () => {
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{flexDirection: 'row-reverse', justifyContent:  "flex-end"}}>
         <TouchableOpacity
           style={{
             alignItems: "center",
             flexDirection: "row",
             justifyContent: "center",
+            paddingHorizontal: 10,
           }}
           onPress={() => {
-            if (router.canGoBack()) {
-              router.back();
-            } else {
-              router.push("(tabs)");
-            }
+            router.push("screens/ProfileDuplicated");
           }}
         >
-          <TabBarIcon name="ellipsis-vertical" color="white" />
+          <TabBarIcon name="person-circle" color="white" />
         </TouchableOpacity>
+        {/* <WhatsAppButton /> */}
       </SafeAreaView>
-    );
-  };
-
-  const OptionsMenu = () => {
-    const [visible, setVisible] = useState(false);
-
-    const openMenu = () => setVisible(true);
-
-    const closeMenu = () => setVisible(false);
-    return (
-      <Provider>
-        <SafeAreaView>
-          <Menu
-            visible={visible}
-            onDismiss={closeMenu}
-            anchorPosition="bottom"
-            anchor={
-              <TouchableOpacity
-                onPress={openMenu}
-                style={{
-                  alignItems: "center",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                }}
-              >
-                <TabBarIcon name="ellipsis-vertical" color="white" />
-              </TouchableOpacity>
-            }
-            style={{
-              backgroundColor: "white",
-              borderWidth: 1,
-              top: 40,
-              left: -110,
-              position: "absolute",
-              zIndex: 100,
-            }}
-          >
-            <Menu.Item
-              onPress={() => {
-                router.push("screens/Profile");
-              }}
-              title="Mi Perfil"
-            >
-              <TabBarIcon name="person" color="black" />
-            </Menu.Item>
-            <Menu.Item onPress={() => {}} title="Ayuda" />
-            <Divider />
-            <Menu.Item
-              onPress={signOutUser}
-              title="Salir sesion"
-            />
-          </Menu>
-        </SafeAreaView>
-      </Provider>
     );
   };
 
@@ -190,74 +141,76 @@ export default function TabLayout() {
         </View>
       )}
       {!isLoading && (
-        <Tabs
-          screenOptions={{
-            tabBarActiveTintColor: Colors[colorScheme ?? "dark"].tint,
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Colors.palette.primary,
-              borderBottomColor: Colors.palette.tertiary,
-            },
-            headerTintColor: "white",
-            headerTitleStyle: {
-              fontWeight: "bold",
-            },
-            headerLeft: () => <BackButton />,
-            headerRight: () => <OptionsMenu />,
-          }}
-        >
-          <Tabs.Screen
-            name="index"
-            options={{
-              title: "Inicio",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "home" : "home-outline"}
-                  color={color}
-                />
-              ),
+        <>
+          <Tabs
+            screenOptions={{
+              tabBarActiveTintColor: Colors[colorScheme ?? "dark"].tint,
+              headerShown: true,
+              headerStyle: {
+                backgroundColor: Colors.palette.primary,
+                borderBottomColor: Colors.palette.tertiary,
+              },
+              headerTintColor: "white",
+              headerTitleStyle: {
+                fontWeight: "bold",
+              },
+              headerLeft: () => <BackButton />,
+              headerRight: () => <ProfileButton />,
             }}
-          />
+          >
+            <Tabs.Screen
+              name="index"
+              options={{
+                title: "Inicio",
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon
+                    name={focused ? "home" : "home-outline"}
+                    color={color}
+                  />
+                ),
+              }}
+            />
 
-          <Tabs.Screen
-            name="CardQR"
-            options={{
-              title: "Card",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "qr-code" : "qr-code-outline"}
-                  color={color}
-                />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="Tracking"
-            options={{
-              title: "Seguimiento",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "reader" : "reader-outline"}
-                  color={color}
-                />
-              ),
-            }}
-          />
+            <Tabs.Screen
+              name="CardQR"
+              options={{
+                title: "Card",
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon
+                    name={focused ? "qr-code" : "qr-code-outline"}
+                    color={color}
+                  />
+                ),
+              }}
+            />
+            <Tabs.Screen
+              name="Tracking"
+              options={{
+                title: "Envios",
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon
+                    name={focused ? "reader" : "reader-outline"}
+                    color={color}
+                  />
+                ),
+              }}
+            />
 
-          <Tabs.Screen
-            name="Appointment"
-            options={{
-              title: "Citas",
-              tabBarIcon: ({ color, focused }) => (
-                <TabBarIcon
-                  name={focused ? "calendar" : "calendar-outline"}
-                  color={color}
-                />
-              ),
-              // href: isProfileCompleted ? "Profile" : null,
-            }}
-          />
-        </Tabs>
+            <Tabs.Screen
+              name="Appointment"
+              options={{
+                title: "Citas",
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon
+                    name={focused ? "calendar" : "calendar-outline"}
+                    color={color}
+                  />
+                ),
+                // href: isProfileCompleted ? "Profile" : null,
+              }}
+            />
+          </Tabs>
+        </>
       )}
     </>
   );

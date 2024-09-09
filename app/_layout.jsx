@@ -69,7 +69,20 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="screens/Profile"
-            options={{ presentation: "modal", headerShown: false }}
+            options={{
+              presentation: "modal",
+              headerShown: true,
+              headerTitle: "Editar Perfil",
+            }}
+          />
+
+          <Stack.Screen
+            name="screens/StageScreen"
+            options={{
+              presentation: "modal",
+              headerShown: true,
+              headerTitle: "Perfil de Usuario",
+            }}
           />
         </Stack>
       </ThemeProvider>

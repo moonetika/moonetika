@@ -54,10 +54,10 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <Text style={styles.title}>Perfil de usuario </Text>
+        {/* <Text style={styles.title}>Perfil de usuario </Text> */}
         <Text style={styles.subtitle}>Informacion Personal: </Text>
         <TextInput
-          style={styles.input}
+          style={{ ...styles.input, borderWidth: 0 }}
           label="Nombres"
           textColor="white"
           value={usuario.name}
@@ -68,12 +68,12 @@ const ProfileScreen = () => {
               onSurfaceDisabled: Colors.palette.tertiary,
             },
           }}
-          underlineColor="black"
+          underlineColor="white"
           disabled="true"
         />
 
         <TextInput
-          style={styles.input}
+          style={{ ...styles.input, borderWidth: 0 }}
           label="Apellidos"
           textColor="white"
           value={usuario.lastname}
@@ -84,12 +84,12 @@ const ProfileScreen = () => {
               onSurfaceDisabled: Colors.palette.tertiary,
             },
           }}
-          underlineColor="black"
+          underlineColor="white"
           disabled="true"
         />
 
         <TextInput
-          style={styles.input}
+          style={{ ...styles.input, borderWidth: 0 }}
           label="Fecha de nacimiento"
           textColor="white"
           value={usuario.birthDate}
@@ -100,12 +100,12 @@ const ProfileScreen = () => {
               onSurfaceDisabled: Colors.palette.tertiary,
             },
           }}
-          underlineColor="black"
+          underlineColor="white"
           disabled="true"
         />
 
         <TextInput
-          style={styles.input}
+          style={{ ...styles.input, borderWidth: 0 }}
           label="DNI/NIE/Pasaporte"
           textColor="white"
           value={usuario.personalIdNumber}
@@ -116,12 +116,12 @@ const ProfileScreen = () => {
               onSurfaceDisabled: Colors.palette.tertiary,
             },
           }}
-          underlineColor="black"
+          underlineColor="white"
           disabled="true"
         />
 
         <TextInput
-          style={styles.input}
+          style={{ ...styles.input, borderWidth: 0 }}
           label="Nacionalidad"
           textColor="white"
           value={usuario.nacionality}
@@ -132,7 +132,7 @@ const ProfileScreen = () => {
               onSurfaceDisabled: Colors.palette.tertiary,
             },
           }}
-          underlineColor="black"
+          underlineColor="white"
           disabled="true"
         />
 
@@ -145,7 +145,7 @@ const ProfileScreen = () => {
           value={usuario.email}
           onChangeText={(text) => handleChangeText("email", text)}
           theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-          underlineColor="black"
+          underlineColor="white"
         />
         <TextInput
           style={styles.input}
@@ -154,7 +154,7 @@ const ProfileScreen = () => {
           value={usuario.mobileNumber}
           onChangeText={(text) => handleChangeText("mobileNumber", text)}
           theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-          underlineColor="black"
+          underlineColor="white"
         />
         <Text style={styles.subtitle}>Direccion: </Text>
         <View style={styles.addressContainer}>
@@ -166,7 +166,7 @@ const ProfileScreen = () => {
               value={usuario.streetName}
               onChangeText={(text) => handleChangeText("streetName", text)}
               theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-              underlineColor="black"
+              underlineColor="white"
             />
             <TextInput
               style={styles.inputAdress}
@@ -175,7 +175,7 @@ const ProfileScreen = () => {
               value={usuario.streetFloor}
               onChangeText={(text) => handleChangeText("streetFloor", text)}
               theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-              underlineColor="black"
+              underlineColor="white"
             />
 
             <TextInput
@@ -185,7 +185,7 @@ const ProfileScreen = () => {
               value={usuario.streetDoor}
               onChangeText={(text) => handleChangeText("streetDoor", text)}
               theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-              underlineColor="black"
+              underlineColor="white"
             />
           </View>
           <View style={styles.addressContainerBasica}>
@@ -196,7 +196,7 @@ const ProfileScreen = () => {
               value={usuario.province}
               onChangeText={(text) => handleChangeText("province", text)}
               theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-              underlineColor="black"
+              underlineColor="white"
             />
             <TextInput
               style={styles.inputAdress}
@@ -205,7 +205,7 @@ const ProfileScreen = () => {
               value={usuario.postalCode}
               onChangeText={(text) => handleChangeText("postalCode", text)}
               theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-              underlineColor="black"
+              underlineColor="white"
             />
           </View>
         </View>
@@ -232,7 +232,7 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight + 10,
+    paddingTop: 10,
     backgroundColor: Colors.palette.primary,
     paddingLeft: 30,
     paddingRight: 30,

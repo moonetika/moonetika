@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Platform,
   Text,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../src/contexts/AuthContext";
@@ -13,39 +14,63 @@ import { authentication, db } from "../../src/firebase/config";
 import { getAuth, signOut } from "firebase/auth";
 import { router, useLocalSearchParams } from "expo-router";
 import { Colors } from "../../src/constants/Colors";
-import { useFocusEffect } from '@react-navigation/native';
-
+import { useFocusEffect } from "@react-navigation/native";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { Button } from "react-native";
+import { Divider, List, TextInput } from "react-native-paper";
+import FabExample from "../../src/components/FloatingButton";
+``;
 export default function HomeScreen(props) {
   const user = getAuth().currentUser;
   const { loggedInUser, setLoggedInUser } = useAuth();
   const [isProfileCompleted, setIsProfileCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [statusPermission, setStatusPermission] = useState(
+    "initializing camera"
+  );
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+  const [text, setText] = useState("Estado: Sin escanear");
+  const [enableAddOrder, setEnableAddOrder] = useState(false);
+
+  const [expanded, setExpanded] = useState(true);
+
+  const _handlePress = () => {
+    setExpanded(!expanded);
+  };
 
   // useFocusEffect( () => {
   //   console.log('[index 25] usefocus loggedInUser', loggedInUser);
   // });
 
   useEffect(() => {
+    askForCameraPermission();
     return () => {
-      console.log('[index 30] loggedInUser', loggedInUser?.profile)
       if (!loggedInUser) {
         setIsLoading(true);
       } else {
-
+        console.log("[index 30] loggedInUser", loggedInUser?.profile);
       }
     };
   }, []);
-  
+
   useEffect(() => {
-    console.log("[index] 41", loggedInUser);
     if (loggedInUser?.profile) {
       setIsProfileCompleted(loggedInUser);
       setIsLoading(false);
     }
     return () => {
-      console.log('exiting');
+      console.log("exiting usseeffect loggedInUser");
     };
   }, [loggedInUser]);
+
+  const askForCameraPermission = () => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      console.log(status);
+      setHasPermission(status === "granted");
+    })();
+  };
 
   const signOutUser = () => {
     signOut(authentication)
@@ -59,56 +84,70 @@ export default function HomeScreen(props) {
   };
 
   const ProfiledCompletedContent = () => {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>
-          Bienvenido! {loggedInUser?.profile?.name}
-        </Text>
-        <Text style={styles.welcome}>
-          Estas listo para empezar a usar la app!
-        </Text>
+    // Request Camera Permission
+    useEffect(() => {
+      askForCameraPermission();
+    }, []);
 
-        <TouchableOpacity onPress={signOutUser} style={styles.button}>
-          <Text style={styles.signOutText}>Salir de Session</Text>
-        </TouchableOpacity>
-        {/* <Portal>
-          <FAB.Group
-            open={open}
-            visible
-            icon={open ? "plus" : "calendar-today"}
-            actions={[
-              { icon: "plus", onPress: () => ////console.log("Pressed add") },
-              {
-                icon: "star",
-                label: "Star",
-                onPress: () => ////console.log("Pressed star"),
-              },
-              {
-                icon: "email",
-                label: "Email",
-                onPress: () => ////console.log("Pressed email"),
-              },
-              {
-                icon: "bell",
-                label: "Remind",
-                onPress: () => ////console.log("Pressed notifications"),
-              },
-            ]}
-            onStateChange={onStateChange}
-            onPress={() => {
-              if (open) {
-                // do something if the speed dial is open
-              }
-            }}
+    // What happens when we scan the bar code
+    const handleBarCodeScanned = ({ type, data }) => {
+      setScanned(true);
+      setText(data);
+      console.log("Type: " + type + "\nData: " + data);
+    };
+
+    if (hasPermission === null) {
+      return (
+        <View style={styles.profileCompletedContainer}>
+          <Text>Requesting for camera permission</Text>
+        </View>
+      );
+    }
+    if (hasPermission === false) {
+      return (
+        <View style={styles.profileCompletedContainer}>
+          <Text style={{ margin: 10 }}>No access to camera</Text>
+          <Button
+            title={"Allow Camera"}
+            onPress={() => askForCameraPermission()}
           />
-        </Portal> */}
-      </SafeAreaView>
+        </View>
+      );
+    }
+
+    return (
+      <>
+        <View style={styles.titleContainer}>
+          <Image
+            source={require("../../assets/tucan-group-logo.png")}
+            style={styles.logo}
+          />
+          <View>
+            <Text style={styles.title}>
+              Bienvenido! {loggedInUser?.profile?.name}
+            </Text>
+            <Text style={styles.welcome}>
+              Estas listo para empezar a usar la app!
+            </Text>
+          </View>
+        </View>
+        <View style={styles.profileCompletedContainer}>
+          <View style={styles.blockInstruccion}>
+            <Text style={styles.title}>Pasos para usar Tucan QR Card</Text>
+            <Text style={styles.subtitle}> 1. Completar Perfil</Text>
+            <Text style={styles.subtitle}>
+              2. Rellenar correctamente y verificar numero de identificacion
+            </Text>
+            <Text style={styles.subtitle}> 3. Usar TucanQR Card</Text>
+          </View>
+        </View>
+      </>
     );
   };
 
   const IncompleteProfileContent = () => {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.withoutProfileCompletedContainer}>
         <Text style={styles.title}>Bienvenido! {user?.email} </Text>
         <Text style={styles.welcome}>
           Tu cuenta ha sido creada exitosamente!
@@ -123,18 +162,18 @@ export default function HomeScreen(props) {
         <TouchableOpacity onPress={signOutUser} style={styles.button}>
           <Text style={styles.signOutText}>Salir de Session</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     );
   };
 
   return (
-    <>
+    <SafeAreaView style={styles.container}>
       {isLoading && (
-        <View style={[styles.container2, styles.horizontal]}>
+        <View style={[styles.loadingContainer, styles.horizontal]}>
           <ActivityIndicator
             size="large"
             color="white"
-            style={styles.container}
+            style={styles.container4}
           />
         </View>
       )}
@@ -144,27 +183,66 @@ export default function HomeScreen(props) {
         ) : (
           <IncompleteProfileContent />
         ))}
-    </>
+
+      <Divider />
+      <FabExample />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "space-between",
+    // alignItems: "center",
     backgroundColor: Colors.palette.primary,
+    // borderColor: Colors.palette.tertiary,
+    // borderRadius: 10,
+    // borderWidth: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignSelf: "stretch",
+    justifyContent: "center",
   },
   titleContainer: {
-    flexDirection: "row",
+    flex: 1,
+    paddingHorizontal: 20,
+    justifyContent: "flex-start",
+    alignContent: "center",
     alignItems: "center",
+    flexDirection: "row",
     gap: 8,
+  },
+  profileCompletedContainer: {
+    flex: 8,
+  },
+  withoutProfileCompletedContainer: {
+    flex: 5,
+  },
+  blockInstruccion: {
+    padding: 20,
   },
   title: {
     color: "white",
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  subtitle: {
+    color: "white",
+    fontSize: 20,
+    marginBottom: 20,
   },
   welcome: {
     color: "white",
+  },
+  packageListTitle: {
+    fontSize: 25,
+    fontWeight: "600",
+  },
+  logo: {
+    width: 80,
+    height: 80,
   },
   stepContainer: {
     gap: 8,
@@ -219,12 +297,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 16,
   },
-  container2: {
-    flex: 1,
-    justifyContent: "center",
-  },
+
   horizontal: {
     flexDirection: "row",
     justifyContent: "space-around",
+  },
+  accordion: {
+    backgroundColor: Colors.palette.primary,
+  },
+  accordionItem: {
+    backgroundColor: Colors.palette.tertiary,
   },
 });
