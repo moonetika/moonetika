@@ -48,16 +48,16 @@ export default function HomeScreen(props) {
     return () => {
       if (!loggedInUser) {
         setIsLoading(true);
-      } else {
-        console.log("[index 30] loggedInUser", loggedInUser?.profile);
       }
     };
   }, []);
 
   useEffect(() => {
     if (loggedInUser?.profile) {
-      setIsProfileCompleted(loggedInUser);
       setIsLoading(false);
+      if (loggedInUser?.profile?.personalIdNumber) {
+        setIsProfileCompleted(loggedInUser);
+      }
     }
     return () => {
       console.log("exiting usseeffect loggedInUser");
@@ -89,12 +89,10 @@ export default function HomeScreen(props) {
       askForCameraPermission();
     }, []);
 
-    // What happens when we scan the bar code
-    const handleBarCodeScanned = ({ type, data }) => {
-      setScanned(true);
-      setText(data);
-      console.log("Type: " + type + "\nData: " + data);
-    };
+    useEffect(() => {
+      const isLoading = hasPermission === null || hasPermission === false;
+      setIsLoading(isLoading);
+    }, [hasPermission]);
 
     if (hasPermission === null) {
       return (

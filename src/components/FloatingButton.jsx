@@ -10,8 +10,8 @@ const FabExample = () => {
   const [disablebtn, setDisablebtn] = useState(true);
 
   const openWhatsApp = () => {
-    const phoneNumber = '+34612510075'; // Replace with the target phone number
-    const message = 'Hola Tucan, Requiero ayuda con la applicacion'; // Customize your message
+    const phoneNumber = '+34622434858'; // Replace with the target phone number
+    const message = 'Hola Tucan, Consulta sobre la applicacion'; // Customize your message
     const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
 
     Linking.canOpenURL(url)

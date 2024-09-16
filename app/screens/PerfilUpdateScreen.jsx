@@ -3,8 +3,6 @@ import { ScrollView } from "react-native";
 
 import {
   View,
-  // TextInput,
-  Button,
   StyleSheet,
   StatusBar,
   TouchableOpacity,
@@ -15,7 +13,7 @@ import {
 import { Colors } from "../../src/constants/Colors";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { db, authentication } from "../../src/firebase/config";
-import { TextInput } from "react-native-paper";
+import { Divider, ProgressBar, TextInput } from "react-native-paper";
 
 const PerfilUpdateScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,8 +30,26 @@ const PerfilUpdateScreen = ({ navigation }) => {
     codigopostal: "",
   });
 
+  const [step, setStep] = useState(1); // Track the current step
+  const [progress, setProgress] = useState(0.33); // Track progress bar
+
   const handleChangeText = (name, value) => {
     setUsuario({ ...usuario, [name]: value });
+  };
+
+  const nextStep = () => {
+    setStep(step + 1);
+    setProgress(progress + 0.33);
+  };
+
+  const prevStep = () => {
+    setStep(step - 1);
+    setProgress(progress - 0.33);
+  };
+
+  const handleSubmit = () => {
+    // Submit form logic (e.g., saving data)
+    console.log("Profile Submitted");
   };
 
   const handleCompleteProfile = () => {
@@ -52,137 +68,126 @@ const PerfilUpdateScreen = ({ navigation }) => {
       await setDoc(doc(db, "cliente", uid), data);
       // await addDoc(collection(db, "cliente"), data);
       setIsLoading(false);
-      router.replace('(tabs)');
+      router.replace("(tabs)");
     } catch (error) {
       ////console.log(error);
     }
   };
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContainer}
-      >
-        <Text style={styles.title}>Completar perfil: </Text>
-        <View>
-          <Text style={styles.subtitle}> Informacion personal:</Text>
-          {/* <TextInput
-            style={styles.input}
-            mode="flat"
-            label="Nombres"
-            placeholder="Ingrese sus nombres"
-            placeholderTextColor="gray"
-            textColor="white" // basic color of text
-            // selectionColor="white"
-            // cursorColor="white"
-            // underlineColor="white" // label color on active
-            activeUnderlineColor={Colors.palette.secondary} // label color on active
-            // outlineColor="white"
-            // activeOutlineColor="white"
-            value={usuario.name}
-            onChangeText={(text) => handleChangeText("name", text)}
-            theme={{
-              colors: { onSurfaceVariant: "white", inverseOnSurface: "black" },
-            }}
-          /> */}
-          <TextInput
-            style={styles.input}
-            label="Nombres"
-            textColor="white"
-            value={usuario.name}
-            onChangeText={(text) => handleChangeText("name", text)}
-            theme={{
-              colors: {
-                onSurfaceVariant: Colors.palette.secondary,
-                onSurfaceDisabled: Colors.palette.tertiary,
-              },
-            }}
-            underlineColor="black"
-          />
+  const renderStepContent = (step) => {
+    switch (step) {
+      case 1:
+        return (
+          <>
+            <Text style={styles.subtitle}>Informacion Personal: </Text>
 
-          <TextInput
-            style={styles.input}
-            label="Apellidos"
-            textColor="white"
-            value={usuario.lastname}
-            onChangeText={(text) => handleChangeText("lastname", text)}
-            theme={{
-              colors: {
-                onSurfaceVariant: Colors.palette.secondary,
-                onSurfaceDisabled: Colors.palette.tertiary,
-              },
-            }}
-            underlineColor="black"
-          />
+            <TextInput
+              style={styles.input}
+              label="Nombres"
+              textColor="white"
+              value={usuario.name}
+              onChangeText={(text) => handleChangeText("name", text)}
+              theme={{
+                colors: {
+                  onSurfaceVariant: Colors.palette.secondary,
+                  onSurfaceDisabled: Colors.palette.tertiary,
+                },
+              }}
+              underlineColor="black"
+            />
 
-          <TextInput
-            style={styles.input}
-            label="Fecha de nacimiento"
-            textColor="white"
-            value={usuario.birthDate}
-            onChangeText={(text) => handleChangeText("birthDate", text)}
-            theme={{
-              colors: {
-                onSurfaceVariant: Colors.palette.secondary,
-                onSurfaceDisabled: Colors.palette.tertiary,
-              },
-            }}
-            underlineColor="black"
-          />
+            <TextInput
+              style={styles.input}
+              label="Apellidos"
+              textColor="white"
+              value={usuario.lastname}
+              onChangeText={(text) => handleChangeText("lastname", text)}
+              theme={{
+                colors: {
+                  onSurfaceVariant: Colors.palette.secondary,
+                  onSurfaceDisabled: Colors.palette.tertiary,
+                },
+              }}
+              underlineColor="black"
+            />
 
-          <TextInput
-            style={styles.input}
-            label="DNI/NIE/Pasaporte"
-            textColor="white"
-            value={usuario.personalIdNumber}
-            onChangeText={(text) => handleChangeText("personalIdNumber", text)}
-            theme={{
-              colors: {
-                onSurfaceVariant: Colors.palette.secondary,
-                onSurfaceDisabled: Colors.palette.tertiary,
-              },
-            }}
-            underlineColor="black"
-          />
+            <TextInput
+              style={styles.input}
+              label="Fecha de nacimiento"
+              textColor="white"
+              value={usuario.birthDate}
+              onChangeText={(text) => handleChangeText("birthDate", text)}
+              theme={{
+                colors: {
+                  onSurfaceVariant: Colors.palette.secondary,
+                  onSurfaceDisabled: Colors.palette.tertiary,
+                },
+              }}
+              underlineColor="black"
+            />
 
-          <TextInput
-            style={styles.input}
-            label="Nacionalidad"
-            textColor="white"
-            value={usuario.nacionality}
-            onChangeText={(text) => handleChangeText("nacionality", text)}
-            theme={{
-              colors: {
-                onSurfaceVariant: Colors.palette.secondary,
-                onSurfaceDisabled: Colors.palette.tertiary,
-              },
-            }}
-            underlineColor="black"
-          />
+            <TextInput
+              style={styles.input}
+              label="DNI/NIE/Pasaporte"
+              textColor="white"
+              value={usuario.personalIdNumber}
+              onChangeText={(text) =>
+                handleChangeText("personalIdNumber", text)
+              }
+              theme={{
+                colors: {
+                  onSurfaceVariant: Colors.palette.secondary,
+                  onSurfaceDisabled: Colors.palette.tertiary,
+                },
+              }}
+              underlineColor="black"
+            />
 
-          <Text style={styles.subtitle}>Informacion de Contacto: </Text>
+            <TextInput
+              style={styles.input}
+              label="Nacionalidad"
+              textColor="white"
+              value={usuario.nacionality}
+              onChangeText={(text) => handleChangeText("nacionality", text)}
+              theme={{
+                colors: {
+                  onSurfaceVariant: Colors.palette.secondary,
+                  onSurfaceDisabled: Colors.palette.tertiary,
+                },
+              }}
+              underlineColor="black"
+            />
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <Text style={styles.subtitle}>Informacion de Contacto: </Text>
 
-          <TextInput
-            style={styles.input}
-            label="Correo electronico:"
-            textColor="white"
-            value={usuario.email}
-            onChangeText={(text) => handleChangeText("email", text)}
-            theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-            underlineColor="black"
-          />
-          <TextInput
-            style={styles.input}
-            label="Telefono movil:"
-            textColor="white"
-            value={usuario.mobileNumber}
-            onChangeText={(text) => handleChangeText("mobileNumber", text)}
-            theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-            underlineColor="black"
-          />
-          <Text style={styles.subtitle}>Direccion: </Text>
-          <View style={styles.addressContainer}>
-            <View style={styles.addressContainerBasica}>
+            <TextInput
+              style={styles.input}
+              label="Correo electronico:"
+              textColor="white"
+              value={usuario.email}
+              onChangeText={(text) => handleChangeText("email", text)}
+              theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
+              underlineColor="black"
+            />
+            <TextInput
+              style={styles.input}
+              label="Telefono movil:"
+              textColor="white"
+              value={usuario.mobileNumber}
+              onChangeText={(text) => handleChangeText("mobileNumber", text)}
+              theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
+              underlineColor="black"
+            />
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <Text style={styles.subtitle}>Informacion Personal: </Text>
+            <View style={styles.addressFirstRow}>
               <TextInput
                 style={styles.input}
                 label="Calle"
@@ -194,6 +199,8 @@ const PerfilUpdateScreen = ({ navigation }) => {
                 }}
                 underlineColor="black"
               />
+            </View>
+            <View style={styles.addressSecondRow}>
               <TextInput
                 style={styles.inputAdress}
                 label="Piso"
@@ -217,8 +224,6 @@ const PerfilUpdateScreen = ({ navigation }) => {
                 }}
                 underlineColor="black"
               />
-            </View>
-            <View style={styles.addressContainerBasica}>
               <TextInput
                 style={styles.inputAdress}
                 label="Provincia"
@@ -242,24 +247,83 @@ const PerfilUpdateScreen = ({ navigation }) => {
                 underlineColor="black"
               />
             </View>
-          </View>
-        </View>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.profileContainer}>
+        <Text style={styles.title}>Completar perfil:</Text>
+        <Text style={styles.buttonText}> Paso {step} de 3</Text>
+        <ProgressBar
+          progress={progress}
+          style={styles.progress}
+          color={Colors.palette.tertiary}
+        />
+      </View>
 
-        <TouchableOpacity onPress={handleCompleteProfile} style={styles.button}>
-          <Text style={styles.buttonText}>Guardar</Text>
-          {isLoading && (
-            <ActivityIndicator
-              size="small"
-              color="white"
-              style={{
-                alignSelf: "center",
-                justifyContent: "center",
-                paddingLeft: 10,
-              }}
-            />
-          )}
-        </TouchableOpacity>
-      </ScrollView>
+      {/* <View style={styles.progressContainer}>
+      </View> */}
+      <View style={styles.mainContainer}>{renderStepContent(step)}</View>
+
+      <View style={styles.buttonContainer}>
+        {step > 1 && (
+          <TouchableOpacity onPress={prevStep} style={styles.button}>
+            <Text style={styles.buttonText}>Atras</Text>
+            {isLoading && (
+              <ActivityIndicator
+                size="small"
+                color="white"
+                style={{
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  paddingLeft: 10,
+                }}
+              />
+            )}
+          </TouchableOpacity>
+        )}
+
+        {step < 3 && (
+          <TouchableOpacity onPress={nextStep} style={styles.button}>
+            <Text style={styles.buttonText}>Siguiente</Text>
+            {isLoading && (
+              <ActivityIndicator
+                size="small"
+                color="white"
+                style={{
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  paddingLeft: 10,
+                }}
+              />
+            )}
+          </TouchableOpacity>
+        )}
+
+        {step === 3 && (
+          <TouchableOpacity
+            onPress={handleCompleteProfile}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Guardar</Text>
+            {isLoading && (
+              <ActivityIndicator
+                size="small"
+                color="white"
+                style={{
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  paddingLeft: 10,
+                }}
+              />
+            )}
+          </TouchableOpacity>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -269,13 +333,36 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: StatusBar.currentHeight + 10,
     backgroundColor: Colors.palette.primary,
-    // backgroundColor: 'white',
+    justifyContent: "center",
   },
-  scrollView: {
+  profileContainer: {
+    flex: 2,
     marginHorizontal: 20,
   },
-  scrollViewContainer: {
-    justifyContent: "center",
+  mainContainer: {
+    marginHorizontal: 20,
+    flex: 8,
+    justifyContent: "flex-start",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+    marginHorizontal: 20,
+    gap: 10,
+  },
+  progressContainer: {
+    flex: 2,
+  },
+  addressFirstRow: {
+    flex: 2,
+    justifyContent: "space-between",
+  },
+  addressSecondRow: {
+    flex: 8,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
   label: {
     fontSize: 16,
@@ -294,6 +381,7 @@ const styles = StyleSheet.create({
     // color: "white",
     // placeholderTextColor: "white",
     borderRadius: 5,
+    alignSelf: "stretch",
   },
   logo: {
     width: 150,
@@ -315,17 +403,31 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: Colors.palette.secondary,
-    width: "90%",
     paddingVertical: 15,
-    marginHorizontal: 15,
     borderRadius: 8,
     marginBottom: 20,
+    width: "50%",
+    // alignSelf: "stretch"
   },
   buttonText: {
     color: "#ffffff",
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
+  },
+
+  progress: {
+    marginBottom: 20,
+    height: 8,
+  },
+  inputAdress: {
+    width: "45%",
+    height: 55,
+    fontSize: 16,
+    borderColor: "gray",
+    borderWidth: 0.5,
+    marginBottom: 16,
+    borderRadius: 5,
   },
 });
 

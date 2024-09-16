@@ -19,21 +19,11 @@ import {
   Text,
   SafeAreaView,
 } from "react-native";
-import {
-  Button,
-  Divider,
-  IconButton,
-  Menu,
-  Provider,
-} from "react-native-paper";
 import { signOut } from "firebase/auth";
-import FloatingWhatsAppButton from "../../src/components/WhatsappButton";
-import WhatsAppButton from "../../src/components/WhatsappButton";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const [isLoading, setIsLoading] = useState(false);
-  const [isProfileCompleted, setIsProfileCompleted] = useState(false);
   const { loggedInUser, setLoggedInUser } = useAuth();
 
   //onInit
@@ -53,26 +43,17 @@ export default function TabLayout() {
       const docRef = doc(db, "cliente", user.uid);
       const docSnap = await getDoc(docRef);
       const exists = docSnap.exists();
-      let userData = null;
+      let userData = {};
       if (exists) {
-        setIsProfileCompleted(true);
+        // setIsProfileCompleted(true);
         userData = docSnap.data();
+        console.log("userData", userData);
       }
-      setLoggedInUser({ ...user, profile: userData });
+      const data = { ...user, profile: userData };
+      setLoggedInUser(data);
     } catch (error) {
       console.log("[tabs] " + error);
     }
-  };
-
-  const signOutUser = () => {
-    signOut(authentication)
-      .then((res) => {
-        console.log("[index] logout" + res);
-        setLoggedInUser(null);
-      })
-      .catch((err) => {
-        console.log("[index] logout" + err);
-      });
   };
 
   const BackButton = () => {
@@ -101,7 +82,9 @@ export default function TabLayout() {
 
   const ProfileButton = () => {
     return (
-      <SafeAreaView style={{flexDirection: 'row-reverse', justifyContent:  "flex-end"}}>
+      <SafeAreaView
+        style={{ flexDirection: "row-reverse", justifyContent: "flex-end" }}
+      >
         <TouchableOpacity
           style={{
             alignItems: "center",
@@ -115,7 +98,6 @@ export default function TabLayout() {
         >
           <TabBarIcon name="person-circle" color="white" />
         </TouchableOpacity>
-        {/* <WhatsAppButton /> */}
       </SafeAreaView>
     );
   };

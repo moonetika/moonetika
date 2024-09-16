@@ -3,6 +3,7 @@ import { Colors } from "../../src/constants/Colors";
 import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
 import WebView from "react-native-webview";
 import Constants from "expo-constants";
+import NetInfo from "@react-native-community/netinfo";
 
 const TrackingScreen = () => {
   const runFirst = `
@@ -14,9 +15,14 @@ const TrackingScreen = () => {
       // setTimeout(function() { window.alert('Bienvenidos') }, 2000);
       true; // note: this is required, or you'll sometimes get silent failures
     `;
+
+  NetInfo.fetch().then((state) => {
+    console.log("Connection type", state.type);
+    console.log("Is connected?", state.isConnected);
+  });
+
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.palette.primary, paddingTop: Constants.statusBarHeight}}>
-      {/* <Text style={styles.title}>Tracking mi paquete:</Text> */}
+    <View style={styles.container}>
       <WebView
         source={{
           uri: "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ16zMCPUkKA_Pe5Qi-I2_f2kD-Q8RG346CNYv_fZvVzj88maeKkZ7_hBy8GdYxSDwxmHmRaiukc",
@@ -31,29 +37,8 @@ const TrackingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 30,
     backgroundColor: Colors.palette.primary,
-    marginTop: Constants.statusBarHeight,
-  },
-  title: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
-  },
-  titleContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  webview: {
-    flex: 1,
+    paddingTop: Constants.statusBarHeight,
   },
 });
 

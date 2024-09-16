@@ -66,7 +66,7 @@ const ProfilePage = () => {
     if (!result.canceled) {
       const { uri } = result.assets[0]; // Get image URI
       const savedUri = await saveImageToFileSystem(uri); // Save the image locally
-      console.log(savedUri, 'savedUri');
+      console.log(savedUri, "savedUri");
       setAvatar(savedUri); // Set the new av6atar
     }
     // if (!result.canceled) {
@@ -95,7 +95,7 @@ const ProfilePage = () => {
       });
       const userProfileMerged = { ...usuario, pictureFileName: fileName };
       SetUserProfileInfo(userProfileMerged, loggedInUser.uid);
-      const finalUser = { ...loggedInUser, profile: userProfileMerged }
+      const finalUser = { ...loggedInUser, profile: userProfileMerged };
       setLoggedInUser(finalUser);
       return localUri; // Return the local path to the image
     } catch (error) {
@@ -221,28 +221,6 @@ const ProfilePage = () => {
           </Button>
         </Card.Content>
       </Card>
-
-      {/* Profile Actions */}
-      {/* <Card>
-        <Card.Content>
-          <Button
-            mode="contained"
-            onPress={() => console.log("Edit Profile Pressed")}
-            style={styles.button}
-            icon="account-edit"
-          >
-            Edit Profile
-          </Button>
-          <Button
-            mode="contained"
-            onPress={() => console.log("Change Password Pressed")}
-            style={styles.button}
-            icon="lock-reset"
-          >
-            Change Password
-          </Button>
-        </Card.Content>
-      </Card> */}
     </View>
   );
 };

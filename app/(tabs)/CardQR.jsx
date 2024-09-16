@@ -1,10 +1,8 @@
 import {
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
   ActivityIndicator,
 } from "react-native";
 import { Colors } from "../../src/constants/Colors";
@@ -17,28 +15,42 @@ const CardScreen = () => {
   const { loggedInUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isProfileCompleted, setIsProfileCompleted] = useState(false);
+  const [userData, setUserData] = useState({ name: "", personaIdNumber: "" });
 
   useEffect(() => {
     setIsLoading(true);
     if (loggedInUser) {
       setIsLoading(false);
     }
-    console.log("[card] enter here 29", loggedInUser?.profile?.personalIdNumber);
-    if (loggedInUser?.profile?.personalIdNumber.length >= 0) {
+    console.log(
+      "[card] enter here 29",
+      loggedInUser?.profile?.personalIdNumber
+    );
+    const personalId = loggedInUser?.profile?.personalIdNumber;
+    if (personalId && personalId.length >= 0) {
       setIsProfileCompleted(true);
+      setUserData({
+        name: loggedInUser?.profile?.name,
+        personaIdNumber: loggedInUser?.profile?.personalIdNumber,
+      });
     }
     return () => {};
   }, []);
 
   useEffect(() => {
-    console.log("[card]", loggedInUser);
+    console.log("[card] 40", loggedInUser);
     if (loggedInUser) {
       setIsLoading(false);
     }
-    console.log("enter here 39", loggedInUser?.profile?.personalIdNumber);
+    const personalId = loggedInUser?.profile?.personalIdNumber;
+    console.log("enter here 45 personalId", personalId);
 
-    if (loggedInUser?.profile?.personalIdNumber.length >= 0) {
+    if (personalId && personalId.length >= 0) {
       setIsProfileCompleted(true);
+      setUserData({
+        name: loggedInUser?.profile?.name,
+        personaIdNumber: loggedInUser?.profile?.personalIdNumber,
+      });
     }
     return () => {};
   }, [loggedInUser]);
@@ -67,18 +79,16 @@ const CardScreen = () => {
             onPress={() => router.push("screens/PerfilUpdateScreen")}
             style={styles.button}
           >
-            <Text style={styles.signOutText}>Completar mi perfil</Text>
+            <Text style={styles.buttonText}>Completar mi perfil</Text>
           </TouchableOpacity>
         </>
       )}
       {isProfileCompleted && (
         <>
-          <Text style={styles.title}>
-            Tucan QR {loggedInUser?.profile?.name}
-          </Text>
-          <View style={styles.qrcontainer}>
+          <Text style={styles.title}>Tucan QR {userData.name}</Text>
+          <View style={styles.cardContainer}>
             <QRCode
-              value={loggedInUser?.profile?.personalIdNumber}
+              value={userData.personalIdNumber}
               size={200}
               logo={require("../../assets/tucan-group-logo.png")}
               logoBackgroundColor={Colors.palette.primary}
@@ -100,7 +110,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: Colors.palette.primary,
   },
-  qrcontainer: {
+  cardContainer: {
     backgroundColor: "white",
     padding: 20,
   },
@@ -114,16 +124,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 20,
   },
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
-  },
-  titleContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
   button: {
     backgroundColor: Colors.palette.secondary,
     borderRadius: 20,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
   },
-  signOutText: {
+  buttonText: {
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
