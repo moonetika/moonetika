@@ -191,6 +191,19 @@ export default function TabLayout() {
                 // href: isProfileCompleted ? "Profile" : null,
               }}
             />
+            <Tabs.Screen
+              name="contact"
+              options={{
+                title: "Contacto",
+                tabBarIcon: ({ color, focused }) => (
+                  <TabBarIcon
+                    name={focused ? "map" : "map-outline"}
+                    color={color}
+                  />
+                ),
+                // href: isProfileCompleted ? "Profile" : null,
+              }}
+            />
           </Tabs>
         </>
       )}

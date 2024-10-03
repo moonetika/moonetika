@@ -54,7 +54,7 @@ const TrackingScreen = () => {
   const _handlePress = () => {
     setExpanded(!expanded);
   };
-  const [enableAddOrder, setEnableAddOrder] = useState(false);
+  const [isBarcodeScanVisible, setIsBarcodeScanVisible] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [text, setText] = useState("Estado: Sin escanear");
@@ -79,7 +79,8 @@ const TrackingScreen = () => {
     setText(data);
     setCodigo(data);
     console.log("Type: " + type + "\nData: " + data);
-  };
+    setIsBarcodeScanVisible(false);
+  }
 
   const askForCameraPermission = () => {
     (async () => {
@@ -91,12 +92,17 @@ const TrackingScreen = () => {
 
   const [visible, setVisible] = useState(false);
   const [codigo, setCodigo] = useState("");
-  const [listExpanded, setListaExpanded] = useState(false);
+  const [listExpanded, setListaExpanded] = useState(true);
   const [orderList, setOrderList] = useState([]);
   const [currentBarcodeCopied, setCurrentBarcodeCopied] = useState("");
 
   const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const hideModal = () => {
+    setVisible(false);
+    setCodigo("");
+    setIsBarcodeScanVisible(false);
+    setScanned(false);
+  };
 
   const saveOrder = () => {
     const currentTimestamp = (Date.now() / 1000) | 0;
@@ -110,13 +116,18 @@ const TrackingScreen = () => {
           isDeleted: false,
           id: 0,
         };
-        AddOrder(newOrder, loggedInUser?.uid)
-          .then(() => {
-            setOrderList((prev) => [...prev, newOrder]);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        if (orderList.findIndex((order) => order.codigo === codigo)) {
+          AddOrder(newOrder, loggedInUser?.uid)
+            .then(() => {
+              setOrderList((prev) => [...prev, newOrder]);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        } else {
+          setMessageVisible(true);
+          setFooterText(`El codigo: ${codigo} ya esta registrado`);
+        }
       }
     }
   };
@@ -170,11 +181,6 @@ const TrackingScreen = () => {
     setCurrentBarcodeCopied(text);
     setFooterText(`Codigo ${currentBarcodeCopied} copiado!`);
     Clipboard.setStringAsync(text);
-  };
-
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const toogleDialog = () => {
-    setDialogVisible(!dialogVisible);
   };
 
   const handleDelete = (codigo) => {
@@ -231,13 +237,12 @@ const TrackingScreen = () => {
         borderColor: "red",
       }}
     >
-      <Portal>
+      <Portal style={{ flex: 1 }}>
         <Modal
           visible={visible}
           onDismiss={hideModal}
           contentContainerStyle={styles.modalContainer}
           dismissableBackButton="true"
-          style={styles.modal}
         >
           <View style={styles.modalHeaderContainer}>
             <Text style={styles.title}>Agregar nuevo Paquete</Text>
@@ -259,7 +264,7 @@ const TrackingScreen = () => {
                 colors: { onSurfaceVariant: "white" },
               }}
               activeUnderlineColor={Colors.palette.primary}
-              disabled={enableAddOrder}
+              disabled={isBarcodeScanVisible}
               label="Codigo"
               // value={password}
               // secureTextEntry={secureTextEntry}
@@ -268,13 +273,13 @@ const TrackingScreen = () => {
                 <TextInput.Icon
                   icon="barcode-scan"
                   color="white"
-                  onPress={() => setEnableAddOrder(!enableAddOrder)}
+                  onPress={() => setIsBarcodeScanVisible(!isBarcodeScanVisible)}
                 />
               }
               value={codigo}
             />
 
-            {enableAddOrder && (
+            {isBarcodeScanVisible && (
               <>
                 <View style={styles.barcodebox}>
                   <BarCodeScanner
@@ -282,17 +287,21 @@ const TrackingScreen = () => {
                       scanned ? undefined : handleBarCodeScanned
                     }
                     style={{ height: 300, width: 300 }}
-                    onStartShouldSetResponder={(event) => setScanned(false)}
+                    // onStartShouldSetResponder={(event) => setScanned(false)}
                   />
                 </View>
                 {/* <Text style={styles.maintext}>{text}</Text> */}
-
-                {scanned && (
-                  <Text>Pulse en la camara para escanear de nuevo</Text>
-                )}
               </>
             )}
-
+            {/* {scanned && <Text>Pulse en la camara para escanear de nuevo</Text>} */}
+            {isBarcodeScanVisible && scanned && (
+              <TouchableOpacity
+                onPress={(event) => setScanned(false)}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Re-Capturar</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity onPress={saveOrder} style={styles.button}>
               <Text style={styles.buttonText}>Guardar</Text>
             </TouchableOpacity>
@@ -300,16 +309,25 @@ const TrackingScreen = () => {
         </Modal>
       </Portal>
 
-      <Portal>
-        {/* <Dialog visible={visible} onDismiss={toogleDialog}>
+      {/* <Portal> */}
+      {/* <Dialog visible={visible} onDismiss={toogleDialog}>
           <Dialog.Actions>
             <Button onPress={() => console.log("Cancel")}>Cancel</Button>
             <Button onPress={() => console.log("Ok")}>Ok</Button>
           </Dialog.Actions>
         </Dialog> */}
-      </Portal>
-
-      <Text style={styles.title}>Mis paquetes:</Text>
+      {/* </Portal> */}
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flexDirection: "column", flex: 8 }}>
+          <Text style={styles.title}>Mis paquetes:</Text>
+        </View>
+        <IconButton
+          icon="plus-box"
+          iconColor={Colors.palette.secondary}
+          size={30}
+          onPress={showModal}
+        />
+      </View>
 
       <View style={styles.paqueteContainer}>
         <View style={{ flexDirection: "column", flex: 8 }}>
@@ -342,28 +360,11 @@ const TrackingScreen = () => {
                 />
               ))}
             </List.Accordion>
-
-            {/* <List.Accordion
-              left={(props) => <List.Icon {...props} icon="folder" />}
-              title="Verificar Paquete"
-              expanded={expanded}beaker-plus book-plus book-plus-multiple card-plus note-plus  plus-box plus-circle
-              onPress={_handlePress}
-              style={styles.accordion}
-            ></List.Accordion> */}
           </List.Section>
         </View>
-
-        {!listExpanded && (
-          <IconButton
-            icon="plus-box"
-            iconColor={Colors.palette.secondary}
-            size={30}
-            onPress={showModal}
-          />
-        )}
       </View>
 
-      <Text style={styles.title}>Seguimiento:</Text>
+      <Text style={{ ...styles.title, marginTop: 10 }}>Seguimiento:</Text>
 
       <Divider theme={{ colors: { primary: "green" } }} />
 
@@ -419,18 +420,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     opacity: 0.7,
   },
-  modal: {},
   modalContainer: {
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    backgroundColor: Colors.palette.tertiary,
+    backgroundColor: Colors.palette.primary,
     borderRadius: 10,
     borderWidth: 1.5,
+    borderColor: "white",
+    opacity: 0.95,
+    alignSelf: "center",
     padding: 20,
-    borderColor: Colors.palette.primary,
-    // opacity: 0.9,
-    color: "white",
-    flex: 0.75,
+    width: "90%",
+    justifyContent: "center",
   },
   modalHeaderContainer: {
     flexDirection: "row",
@@ -438,16 +437,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     color: "white",
   },
-  button: {
-    backgroundColor: Colors.palette.secondary,
-    borderRadius: 20,
-    padding: 10,
-    margin: 14,
-    width: "78%",
-    height: 50,
-    alignItems: "center",
+  modalBodyContainer: {
+    padding: 20,
+    gap: 10,
     justifyContent: "center",
-    flexDirection: "row",
+    alignItems: "center",
   },
   button: {
     backgroundColor: Colors.palette.secondary,
@@ -467,12 +461,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     alignSelf: "center",
   },
-  modalBodyContainer: {
-    padding: 20,
-    gap: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   input: {
     alignSelf: "stretch",
   },

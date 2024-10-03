@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   View,
   StyleSheet,
-  Platform,
   Text,
   Image,
 } from "react-native";
@@ -15,8 +14,6 @@ import { getAuth, signOut } from "firebase/auth";
 import { router, useLocalSearchParams } from "expo-router";
 import { Colors } from "../../src/constants/Colors";
 import { useFocusEffect } from "@react-navigation/native";
-import { BarCodeScanner } from "expo-barcode-scanner";
-import { Button } from "react-native";
 import { Divider, List, TextInput } from "react-native-paper";
 import FabExample from "../../src/components/FloatingButton";
 ``;
@@ -25,26 +22,8 @@ export default function HomeScreen(props) {
   const { loggedInUser, setLoggedInUser } = useAuth();
   const [isProfileCompleted, setIsProfileCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [statusPermission, setStatusPermission] = useState(
-    "initializing camera"
-  );
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [text, setText] = useState("Estado: Sin escanear");
-  const [enableAddOrder, setEnableAddOrder] = useState(false);
-
-  const [expanded, setExpanded] = useState(true);
-
-  const _handlePress = () => {
-    setExpanded(!expanded);
-  };
-
-  // useFocusEffect( () => {
-  //   console.log('[index 25] usefocus loggedInUser', loggedInUser);
-  // });
 
   useEffect(() => {
-    askForCameraPermission();
     return () => {
       if (!loggedInUser) {
         setIsLoading(true);
@@ -60,17 +39,9 @@ export default function HomeScreen(props) {
       }
     }
     return () => {
-      console.log("exiting usseeffect loggedInUser");
+      console.log("exiting useEffect loggedInUser");
     };
   }, [loggedInUser]);
-
-  const askForCameraPermission = () => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      console.log(status);
-      setHasPermission(status === "granted");
-    })();
-  };
 
   const signOutUser = () => {
     signOut(authentication)
@@ -84,47 +55,6 @@ export default function HomeScreen(props) {
   };
 
   const ProfiledCompletedContent = () => {
-    // Request Camera Permission
-    useEffect(() => {
-      askForCameraPermission();
-    }, []);
-
-    useEffect(() => {
-      const isLoading = hasPermission === null || hasPermission === false;
-      setIsLoading(isLoading);
-    }, [hasPermission]);
-
-    if (hasPermission === null) {
-      return (
-        <View style={styles.profileCompletedContainer}>
-          {isLoading && (
-            <View style={[styles.loadingContainer, styles.horizontal]}>
-              <ActivityIndicator
-                size="large"
-                color="white"
-                style={styles.container4}
-              />
-            </View>
-          )}
-          <Text style={{ color: "white" }}>
-            Requesting for camera permission
-          </Text>
-        </View>
-      );
-    }
-    if (hasPermission === false) {
-      return (
-        <View style={styles.profileCompletedContainer}>
-          <Text style={{ margin: 10, color: "white" }}>
-            No access to camera
-          </Text>
-          <Button
-            title={"Allow Camera"}
-            onPress={() => askForCameraPermission()}
-          />
-        </View>
-      );
-    }
 
     return (
       <>

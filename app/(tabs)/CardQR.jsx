@@ -38,6 +38,12 @@ const CardScreen = () => {
   }, []);
 
   useEffect(() => {
+    console.log(userData);
+    return () => {
+    };
+  }, [userData])
+
+  useEffect(() => {
     console.log("[card] 40", loggedInUser);
     if (loggedInUser) {
       setIsLoading(false);
@@ -49,7 +55,7 @@ const CardScreen = () => {
       setIsProfileCompleted(true);
       setUserData({
         name: loggedInUser?.profile?.name,
-        personaIdNumber: loggedInUser?.profile?.personalIdNumber,
+        personalIdNumber: loggedInUser?.profile?.personalIdNumber,
       });
     }
     return () => {};
