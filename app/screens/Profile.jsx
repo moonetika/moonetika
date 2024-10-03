@@ -90,7 +90,7 @@ const ProfileScreen = () => {
               underlineColor="white"
             />
             <View style={styles.addressContainer}>
-              <View style={styles.addressContainerBasica}>
+              <View style={styles.addressFirstRow}>
                 <TextInput
                   style={styles.input}
                   label="Calle"
@@ -102,6 +102,8 @@ const ProfileScreen = () => {
                   }}
                   underlineColor="white"
                 />
+              </View>
+              <View style={styles.addressSecondRow}>
                 <TextInput
                   style={styles.inputAdress}
                   label="Piso"
@@ -125,8 +127,6 @@ const ProfileScreen = () => {
                   }}
                   underlineColor="white"
                 />
-              </View>
-              <View style={styles.addressContainerBasica}>
                 <TextInput
                   style={styles.inputAdress}
                   label="Provincia"
@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     borderRadius: 8,
     marginBottom: 20,
+    marginTop: 15,
   },
   buttonText: {
     color: "#ffffff",
@@ -283,6 +284,8 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     borderColor: "white",
+    maxHeightheight: 300, // Set a fixed height for the card
+    elevation: 4,
   },
   textLabel: {
     fontWeight: "bold",
@@ -295,7 +298,7 @@ const styles = StyleSheet.create({
     color: "lightgray",
     fontWeight: "bold",
     fontSize: 18,
-    marginBottom: 8,
+    marginVertical: 8,
     alignSelf: "flex-start",
   },
 });
