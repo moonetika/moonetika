@@ -8,7 +8,7 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import { TextInput } from "react-native-paper";
+import { TextInput, Card, Button, Divider } from "react-native-paper";
 import { View, TouchableOpacity } from "react-native";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { doc, setDoc } from "firebase/firestore";
@@ -53,178 +53,122 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {/* <Text style={styles.title}>Perfil de usuario </Text> */}
-        <Text style={styles.subtitle}>Informacion Personal: </Text>
-        <TextInput
-          style={{ ...styles.input, borderWidth: 0 }}
-          label="Nombres"
-          textColor="white"
-          value={usuario.name}
-          onChangeText={(text) => handleChangeText("name", text)}
-          theme={{
-            colors: {
-              onSurfaceVariant: Colors.palette.secondary,
-              onSurfaceDisabled: Colors.palette.tertiary,
-            },
-          }}
-          underlineColor="white"
-          disabled="true"
-        />
+      <Text style={styles.subtitle}>Informacion Personal: </Text>
+      <Card mode="outlined" style={styles.cardContainer}>
+        <Card.Content>
+          <Text style={styles.textLabel}> Numero de identificacion: </Text>
+          <Text style={styles.textInfo}> {usuario.personalIdNumber} </Text>
 
-        <TextInput
-          style={{ ...styles.input, borderWidth: 0 }}
-          label="Apellidos"
-          textColor="white"
-          value={usuario.lastname}
-          onChangeText={(text) => handleChangeText("lastname", text)}
-          theme={{
-            colors: {
-              onSurfaceVariant: Colors.palette.secondary,
-              onSurfaceDisabled: Colors.palette.tertiary,
-            },
-          }}
-          underlineColor="white"
-          disabled="true"
-        />
+          <Text style={styles.textLabel}> Fecha de nacimiento: </Text>
+          <Text style={styles.textInfo}> {usuario.birthDate} </Text>
 
-        <TextInput
-          style={{ ...styles.input, borderWidth: 0 }}
-          label="Fecha de nacimiento"
-          textColor="white"
-          value={usuario.birthDate}
-          onChangeText={(text) => handleChangeText("birthDate", text)}
-          theme={{
-            colors: {
-              onSurfaceVariant: Colors.palette.secondary,
-              onSurfaceDisabled: Colors.palette.tertiary,
-            },
-          }}
-          underlineColor="white"
-          disabled="true"
-        />
+          <Text style={styles.textLabel}> Nacionalidad: </Text>
+          <Text style={styles.textInfo}> {usuario.nacionality} </Text>
+        </Card.Content>
+      </Card>
+      <Text style={styles.subtitle}>Informacion de Contacto: </Text>
 
-        <TextInput
-          style={{ ...styles.input, borderWidth: 0 }}
-          label="DNI/NIE/Pasaporte"
-          textColor="white"
-          value={usuario.personalIdNumber}
-          onChangeText={(text) => handleChangeText("personalIdNumber", text)}
-          theme={{
-            colors: {
-              onSurfaceVariant: Colors.palette.secondary,
-              onSurfaceDisabled: Colors.palette.tertiary,
-            },
-          }}
-          underlineColor="white"
-          disabled="true"
-        />
-
-        <TextInput
-          style={{ ...styles.input, borderWidth: 0 }}
-          label="Nacionalidad"
-          textColor="white"
-          value={usuario.nacionality}
-          onChangeText={(text) => handleChangeText("nacionality", text)}
-          theme={{
-            colors: {
-              onSurfaceVariant: Colors.palette.secondary,
-              onSurfaceDisabled: Colors.palette.tertiary,
-            },
-          }}
-          underlineColor="white"
-          disabled="true"
-        />
-
-        <Text style={styles.subtitle}>Informacion de Contacto: </Text>
-
-        <TextInput
-          style={styles.input}
-          label="Correo electronico:"
-          textColor="white"
-          value={usuario.email}
-          onChangeText={(text) => handleChangeText("email", text)}
-          theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-          underlineColor="white"
-        />
-        <TextInput
-          style={styles.input}
-          label="Telefono movil:"
-          textColor="white"
-          value={usuario.mobileNumber}
-          onChangeText={(text) => handleChangeText("mobileNumber", text)}
-          theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-          underlineColor="white"
-        />
-        <Text style={styles.subtitle}>Direccion: </Text>
-        <View style={styles.addressContainer}>
-          <View style={styles.addressContainerBasica}>
+      <Card mode="outlined" style={styles.cardContainer}>
+        <Card.Content>
+          <ScrollView>
             <TextInput
               style={styles.input}
-              label="Calle"
+              label="Correo electronico:"
               textColor="white"
-              value={usuario.streetName}
-              onChangeText={(text) => handleChangeText("streetName", text)}
+              value={usuario.email}
+              onChangeText={(text) => handleChangeText("email", text)}
               theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
               underlineColor="white"
             />
             <TextInput
-              style={styles.inputAdress}
-              label="Piso"
+              style={styles.input}
+              label="Telefono movil:"
               textColor="white"
-              value={usuario.streetFloor}
-              onChangeText={(text) => handleChangeText("streetFloor", text)}
+              value={usuario.mobileNumber}
+              onChangeText={(text) => handleChangeText("mobileNumber", text)}
               theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
               underlineColor="white"
             />
+            <View style={styles.addressContainer}>
+              <View style={styles.addressContainerBasica}>
+                <TextInput
+                  style={styles.input}
+                  label="Calle"
+                  textColor="white"
+                  value={usuario.streetName}
+                  onChangeText={(text) => handleChangeText("streetName", text)}
+                  theme={{
+                    colors: { onSurfaceVariant: Colors.palette.secondary },
+                  }}
+                  underlineColor="white"
+                />
+                <TextInput
+                  style={styles.inputAdress}
+                  label="Piso"
+                  textColor="white"
+                  value={usuario.streetFloor}
+                  onChangeText={(text) => handleChangeText("streetFloor", text)}
+                  theme={{
+                    colors: { onSurfaceVariant: Colors.palette.secondary },
+                  }}
+                  underlineColor="white"
+                />
 
-            <TextInput
-              style={styles.inputAdress}
-              label="Puerta"
-              textColor="white"
-              value={usuario.streetDoor}
-              onChangeText={(text) => handleChangeText("streetDoor", text)}
-              theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-              underlineColor="white"
-            />
-          </View>
-          <View style={styles.addressContainerBasica}>
-            <TextInput
-              style={styles.inputAdress}
-              label="Provincia"
-              textColor="white"
-              value={usuario.province}
-              onChangeText={(text) => handleChangeText("province", text)}
-              theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-              underlineColor="white"
-            />
-            <TextInput
-              style={styles.inputAdress}
-              label="Codigo Postal"
-              textColor="white"
-              value={usuario.postalCode}
-              onChangeText={(text) => handleChangeText("postalCode", text)}
-              theme={{ colors: { onSurfaceVariant: Colors.palette.secondary } }}
-              underlineColor="white"
-            />
-          </View>
-        </View>
+                <TextInput
+                  style={styles.inputAdress}
+                  label="Puerta"
+                  textColor="white"
+                  value={usuario.streetDoor}
+                  onChangeText={(text) => handleChangeText("streetDoor", text)}
+                  theme={{
+                    colors: { onSurfaceVariant: Colors.palette.secondary },
+                  }}
+                  underlineColor="white"
+                />
+              </View>
+              <View style={styles.addressContainerBasica}>
+                <TextInput
+                  style={styles.inputAdress}
+                  label="Provincia"
+                  textColor="white"
+                  value={usuario.province}
+                  onChangeText={(text) => handleChangeText("province", text)}
+                  theme={{
+                    colors: { onSurfaceVariant: Colors.palette.secondary },
+                  }}
+                  underlineColor="white"
+                />
+                <TextInput
+                  style={styles.inputAdress}
+                  label="Codigo Postal"
+                  textColor="white"
+                  value={usuario.postalCode}
+                  onChangeText={(text) => handleChangeText("postalCode", text)}
+                  theme={{
+                    colors: { onSurfaceVariant: Colors.palette.secondary },
+                  }}
+                  underlineColor="white"
+                />
+              </View>
+            </View>
+          </ScrollView>
+        </Card.Content>
+      </Card>
 
-        <TouchableOpacity onPress={handleCompleteProfile} style={styles.button}>
-          <Text style={styles.buttonText}>Guardar</Text>
-          {isLoading && (
-            <ActivityIndicator
-              size="small"
-              color="white"
-              style={{
-                alignSelf: "center",
-                justifyContent: "center",
-                paddingLeft: 10,
-              }}
-            />
-          )}
-        </TouchableOpacity>
-      </ScrollView>
+      <TouchableOpacity onPress={handleCompleteProfile} style={styles.button}>
+        <Text style={styles.buttonText}>Guardar</Text>
+        {isLoading && (
+          <ActivityIndicator
+            size="small"
+            color="white"
+            style={{
+              alignSelf: "center",
+              justifyContent: "center",
+              paddingLeft: 10,
+            }}
+          />
+        )}
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -317,6 +261,42 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  addressFirstRow: {
+    flex: 2,
+    justifyContent: "space-between",
+  },
+  addressSecondRow: {
+    flex: 8,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  inputAdress: {
+    width: "45%",
+    height: 55,
+    fontSize: 16,
+    borderColor: "gray",
+    borderWidth: 0.5,
+    marginBottom: 16,
+    borderRadius: 5,
+  },
+  cardContainer: {
+    borderColor: "white",
+  },
+  textLabel: {
+    fontWeight: "bold",
+    color: "white",
+  },
+  textInfo: {
+    color: Colors.palette.tertiary,
+  },
+  subtitle: {
+    color: "lightgray",
+    fontWeight: "bold",
+    fontSize: 18,
+    marginBottom: 8,
+    alignSelf: "flex-start",
   },
 });
 

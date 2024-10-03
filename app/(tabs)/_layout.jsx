@@ -93,7 +93,7 @@ export default function TabLayout() {
             paddingHorizontal: 10,
           }}
           onPress={() => {
-            router.push("screens/ProfileDuplicated");
+            router.push("screens/StageScreen");
           }}
         >
           <TabBarIcon name="person-circle" color="white" />
