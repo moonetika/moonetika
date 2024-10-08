@@ -46,6 +46,7 @@ export default function RootLayout() {
             headerTitleStyle: {
               fontWeight: "bold",
             },
+            headerBackTitleVisible: false,
           }}
         >
           <Stack.Screen
@@ -70,7 +71,6 @@ export default function RootLayout() {
           <Stack.Screen
             name="screens/Profile"
             options={{
-              presentation: "modal",
               headerShown: true,
               headerTitle: "Editar Perfil",
             }}
@@ -79,7 +79,6 @@ export default function RootLayout() {
           <Stack.Screen
             name="screens/StageScreen"
             options={{
-              presentation: "modal",
               headerShown: true,
               headerTitle: "Perfil de Usuario",
             }}
