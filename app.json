@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "tucan-card-app",
     "name": "TucanAppCard",
     "slug": "TucanAppCard",
     "version": "1.0.0",

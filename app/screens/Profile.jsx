@@ -35,21 +35,11 @@ import * as FileSystem from "expo-file-system";
 const ProfileScreen = () => {
   const [usuario, setUsuario] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [step, setStep] = useState(1);
-  const [progress, setProgress] = useState(0.33);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const { loggedInUser, setLoggedInUser } = useAuth();
-
-  const nextStep = () => {
-    setStep(step + 1);
-    setProgress(progress + 0.33);
-  };
-
-  const prevStep = () => {
-    setStep(step - 1);
-    setProgress(progress - 0.33);
-  };
+  const [isAvatarImageLoaded, setIsAvatarImageLoaded] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const handleChangeText = (name, value) => {
     setUsuario({ ...usuario, [name]: value });
@@ -61,16 +51,23 @@ const ProfileScreen = () => {
     ////console.log("uid", uid);
     if (uid === null) return;
 
-    SetUser(usuario, uid);
+    UpdateUserInfo(usuario, uid);
+    let userMerged = { ...loggedInUser.profile, ...usuario };
+    loggedInUser.profile = userMerged;
+    setLoggedInUser(loggedInUser);
+
+    router.replace("(tabs)");
   };
-  const SetUser = async (data, uid) => {
+
+  const UpdateUserInfo = async (data, uid) => {
     try {
+      console.log("datatosaved", data);
       await setDoc(doc(db, "cliente", uid), data);
       // await addDoc(collection(db, "cliente"), data);
-      setIsLoading(false);
-      router.replace("(tabs)");
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,6 +77,7 @@ const ProfileScreen = () => {
       let userMerged = { ...loggedInUser.profile, ...usuario };
       console.log("[profile:]", userMerged);
       setUsuario(userMerged);
+
       if (userMerged?.pictureFileName) {
         console.log(
           "filename",
@@ -143,29 +141,19 @@ const ProfileScreen = () => {
 
   const saveImageToFileSystem = async (uri) => {
     try {
-      console.log(uri);
+      setUploading(true);
       const fileName = uri.split("/").pop(); // Extract the file name
       const localUri = `${FileSystem.documentDirectory}${fileName}`; // Define local path
       await FileSystem.copyAsync({
         from: uri,
         to: localUri,
       });
-      const userProfileMerged = { ...usuario, pictureFileName: fileName };
-      SetUserProfileInfo(userProfileMerged, loggedInUser.uid);
-      const finalUser = { ...loggedInUser, profile: userProfileMerged };
-      setLoggedInUser(finalUser);
+      handleChangeText("pictureFileName", fileName);
       return localUri; // Return the local path to the image
     } catch (error) {
       console.error("Error saving image:", error);
-    }
-  };
-
-  const SetUserProfileInfo = async (data, uid) => {
-    try {
-      await setDoc(doc(db, "cliente", uid), data);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -183,10 +171,6 @@ const ProfileScreen = () => {
           keyboardShouldPersistTaps="never"
           // keyboardDismissMode="interactive"
         >
-          {/* <HeaderText /> */}
-
-          {/* <Text style={styles.subtitle}>Informacion Personal: </Text> */}
-
           <Card mode="outlined" style={styles.cardContainer}>
             <View style={{ ...styles.profileHeader, flexDirection: "row" }}>
               <View
@@ -207,9 +191,8 @@ const ProfileScreen = () => {
                 <IconButton
                   icon="camera"
                   size={30}
-                  // onPress={() => console.log("algo")}
                   onPress={pickImage}
-                  // disabled={uploading}
+                  disabled={uploading}
                 />
               </View>
               <View style={{ flex: 6, justifyContent: "flex-start" }}>
@@ -275,46 +258,63 @@ const ProfileScreen = () => {
           />
 
           <Text style={styles.textLabel}>Direccion: </Text>
-
-          <TextInput
-            style={styles.input}
-            label="Calle"
-            textColor="white"
-            value={usuario.streetName}
-            placeholder="Calle, Avenida, Pasaje, otro"
-            onChangeText={(text) => handleChangeText("streetName", text)}
-            theme={{
-              colors: { onSurfaceVariant: "gray" },
-            }}
-            underlineColor="white"
-          />
           <View style={styles.addressSecondRow}>
             <TextInput
-              style={styles.inputAdress}
-              label="Provincia"
+              style={{ ...styles.inputAdress, flex: 6 }}
+              label="Calle/Avenida/Pasaje"
               textColor="white"
-              placeholder="Barcelona, Madrid, Valencia, otro"
-              value={usuario.province}
-              onChangeText={(text) => handleChangeText("province", text)}
+              value={usuario.streetName}
+              placeholder="Calle, Avenida, Pasaje, #Numero"
+              onChangeText={(text) => handleChangeText("streetName", text)}
+              theme={{
+                colors: { onSurfaceVariant: "gray" },
+              }}
+              underlineColor="white"
+            />
+            <TextInput
+              style={{ ...styles.inputAdress, flex: 2 }}
+              label="Nro"
+              textColor="white"
+              value={usuario.streetDoorNumber}
+              placeholder="#puerta numero"
+              onChangeText={(text) => handleChangeText("streetDoorNumber", text)}
+              theme={{
+                colors: { onSurfaceVariant: "gray" },
+              }}
+              underlineColor="white"
+            />
+          </View>
+
+          <View style={styles.addressSecondRow}>
+            <TextInput
+              style={{ ...styles.inputAdress, flex: 2 }}
+              label="Piso / Puerta"
+              textColor="white"
+              value={usuario.streetDoor}
+              onChangeText={(text) => handleChangeText("streetDoor", text)}
               theme={{
                 colors: { onSurfaceVariant: Colors.palette.secondary },
               }}
               underlineColor="white"
             />
+
             <TextInput
-              style={styles.inputAdress}
-              label="Localidad"
+              style={{ ...styles.inputAdress, flex: 5 }}
+              label="Ciudad/Localidad"
               textColor="white"
-              value={usuario.streetFloor}
-              placeholder="Barcelona, Cornella, Badalona, etc"
-              onChangeText={(text) => handleChangeText("streetFloor", text)}
+              value={usuario.localidad}
+              placeholder="Cornella"
+              onChangeText={(text) => handleChangeText("localidad", text)}
               theme={{
                 colors: { onSurfaceVariant: Colors.palette.secondary },
               }}
               underlineColor="white"
             />
+          </View>
+
+          <View style={styles.addressSecondRow}>
             <TextInput
-              style={styles.inputAdress}
+              style={{ ...styles.inputAdress, flex: 2 }}
               label="Codigo Postal"
               textColor="white"
               value={usuario.postalCode}
@@ -324,13 +324,13 @@ const ProfileScreen = () => {
               }}
               underlineColor="white"
             />
-
             <TextInput
-              style={styles.inputAdress}
-              label="Piso / Puerta"
+              style={{ ...styles.inputAdress, flex: 5 }}
+              label="Provincia"
               textColor="white"
-              value={usuario.streetDoor}
-              onChangeText={(text) => handleChangeText("streetDoor", text)}
+              placeholder="Barcelona"
+              value={usuario.province}
+              onChangeText={(text) => handleChangeText("province", text)}
               theme={{
                 colors: { onSurfaceVariant: Colors.palette.secondary },
               }}
@@ -415,18 +415,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
-  inputAdress: {
-    width: "45%",
-    height: 55,
-    fontSize: 16,
-    borderColor: "gray",
-    borderWidth: 0.5,
-    marginBottom: 16,
-    marginLeft: 5,
-    paddingLeft: 8,
-    paddingRight: 8,
-    borderRadius: 5,
-  },
   title: {
     color: "white",
     fontSize: 20,
@@ -474,17 +462,27 @@ const styles = StyleSheet.create({
   },
   addressSecondRow: {
     flex: 8,
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     flexDirection: "row",
-    flexWrap: "wrap",
+    gap: 10,
+    // flexWrap: "wrap",
   },
+  // inputAdress: {
+  //   // width: "45%",
+  //   height: 55,
+  //   fontSize: 16,
+  //   borderColor: "gray",
+  //   // borderWidth: 0.5,
+  //   // marginBottom: 16,
+  //   // borderRadius: 5,
+  // },
   inputAdress: {
-    width: "45%",
+    // width: "45%",
     height: 55,
     fontSize: 16,
     borderColor: "gray",
     borderWidth: 0.5,
-    marginBottom: 16,
+    marginBottom: 12,
     borderRadius: 5,
   },
   cardContainer: {
@@ -522,11 +520,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
   },
-  scrollContainer: {
-    // paddi`ng: 20,
-    // paddi`ngBottom: 100, // Extra padding to ensure content is not hidden by the keyboard
+  avatarImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
   },
-  avatarImage: { width: 120, height: 120, borderRadius: 60 },
 });
 
 export default ProfileScreen;

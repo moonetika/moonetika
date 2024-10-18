@@ -47,7 +47,7 @@ export default function TabLayout() {
       if (exists) {
         // setIsProfileCompleted(true);
         userData = docSnap.data();
-        console.log("userData", userData);
+        console.log("[tabs index]: userData", userData);
       }
       const data = { ...user, profile: userData };
       setLoggedInUser(data);

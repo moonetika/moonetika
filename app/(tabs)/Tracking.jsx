@@ -80,7 +80,7 @@ const TrackingScreen = () => {
     setCodigo(data);
     console.log("Type: " + type + "\nData: " + data);
     setIsBarcodeScanVisible(false);
-  }
+  };
 
   const askForCameraPermission = () => {
     (async () => {
@@ -108,7 +108,6 @@ const TrackingScreen = () => {
     const currentTimestamp = (Date.now() / 1000) | 0;
     if (codigo.length > 0) {
       hideModal();
-      console.log("Codigo", codigo);
       if (loggedInUser.uid) {
         const newOrder = {
           codigo,
@@ -116,7 +115,10 @@ const TrackingScreen = () => {
           isDeleted: false,
           id: 0,
         };
-        if (orderList.findIndex((order) => order.codigo === codigo)) {
+        let isFound =
+          orderList.findIndex((order) => order.codigo === codigo) >= 0;
+
+        if (!isFound) {
           AddOrder(newOrder, loggedInUser?.uid)
             .then(() => {
               setOrderList((prev) => [...prev, newOrder]);
@@ -158,7 +160,7 @@ const TrackingScreen = () => {
       .where("isDeleted", "==", false)
       .get();
     const orders = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    console.log("orders ln 157", orders);
+    // console.log("orders ln 157", orders);
     setOrderList(orders);
   };
 
@@ -214,7 +216,7 @@ const TrackingScreen = () => {
       <Snackbar
         visible={messageVisible}
         onDismiss={onDismissSnackBar}
-        duration={1000}
+        duration={3000}
         style={{ backgroundColor: Colors.palette.secondary }}
         // action={{
         //   label: "Undo",
@@ -343,11 +345,26 @@ const TrackingScreen = () => {
               onPress={() => setListaExpanded(!listExpanded)}
               expanded={listExpanded}
             >
+              {/* <List.Item
+                title={'Codigo Guia'}
+                titleStyle={{ color: 'white', fontSize: 18, fontWeight: "700"}}
+                style={styles.itemTitle}
+                key={0}
+                // `right={(props) => (
+                //   <IconButton
+                //     {...props}
+                //     icon="plus-box"
+                //     size={25}
+
+                //   />
+                // )}`
+
+              ></List.Item> */}
               {orderList.map((order, index) => (
                 <List.Item
                   title={order.codigo}
                   style={styles.accordionItem}
-                  key={index}
+                  key={index + 1}
                   onPress={() => copyCodigo(order?.codigo)}
                   right={(props) => (
                     <IconButton
@@ -416,6 +433,12 @@ const styles = StyleSheet.create({
   },
   accordionItem: {
     backgroundColor: Colors.palette.tertiary,
+    paddingVertical: 0,
+    paddingHorizontal: 5,
+    opacity: 0.7,
+  },
+  itemTitle: {
+    backgroundColor: Colors.palette.secondary,
     paddingVertical: 0,
     paddingHorizontal: 5,
     opacity: 0.7,

@@ -39,7 +39,7 @@ export default function HomeScreen(props) {
       }
     }
     return () => {
-      console.log("exiting useEffect loggedInUser");
+      console.log("[tabs index]exiting useEffect loggedInUser");
     };
   }, [loggedInUser]);
 
