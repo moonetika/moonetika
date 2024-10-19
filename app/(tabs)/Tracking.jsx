@@ -181,7 +181,7 @@ const TrackingScreen = () => {
     console.log("cppying", text);
     setMessageVisible(true);
     setCurrentBarcodeCopied(text);
-    setFooterText(`Codigo ${currentBarcodeCopied} copiado!`);
+    setFooterText(`Codigo ${text} copiado!`);
     Clipboard.setStringAsync(text);
   };
 
@@ -235,7 +235,7 @@ const TrackingScreen = () => {
       style={{
         flex: 1,
         backgroundColor: Colors.palette.primary,
-        // paddingTop: Constants.statusBarHeight,
+        paddingTop: Constants.statusBarHeight / 2,
         borderColor: "red",
       }}
     >
@@ -267,7 +267,7 @@ const TrackingScreen = () => {
               }}
               activeUnderlineColor={Colors.palette.primary}
               disabled={isBarcodeScanVisible}
-              label="Codigo"
+              label="Codigo Guia"
               // value={password}
               // secureTextEntry={secureTextEntry}
               onChangeText={(text) => setCodigo(text)}
@@ -311,24 +311,21 @@ const TrackingScreen = () => {
         </Modal>
       </Portal>
 
-      {/* <Portal> */}
-      {/* <Dialog visible={visible} onDismiss={toogleDialog}>
-          <Dialog.Actions>
-            <Button onPress={() => console.log("Cancel")}>Cancel</Button>
-            <Button onPress={() => console.log("Ok")}>Ok</Button>
-          </Dialog.Actions>
-        </Dialog> */}
-      {/* </Portal> */}
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <View style={{ flexDirection: "column", flex: 8 }}>
-          <Text style={styles.title}>Mis paquetes:</Text>
+          <Text style={styles.title}>Lista Paquetes:</Text>
+          <Text style={{ ...styles.subtitle, fontStyle: "italic" }}>
+            Ordenado por codigo #guia
+          </Text>
         </View>
-        <IconButton
-          icon="plus-box"
-          iconColor={Colors.palette.secondary}
-          size={30}
+        <Button
+          mode="contained"
           onPress={showModal}
-        />
+          icon="text-box-plus"
+          textColor="white"
+        >
+          Agregar Paquete
+        </Button>
       </View>
 
       <View style={styles.paqueteContainer}>
@@ -339,30 +336,15 @@ const TrackingScreen = () => {
           >
             <List.Accordion
               left={(props) => <List.Icon {...props} icon="folder" />}
-              title="Ver paquetes registrados"
+              title="Seleccione para copiar codigo #guia"
               style={{ backgroundColor: Colors.palette.primary }}
               titleStyle={{ color: "white" }}
               onPress={() => setListaExpanded(!listExpanded)}
               expanded={listExpanded}
             >
-              {/* <List.Item
-                title={'Codigo Guia'}
-                titleStyle={{ color: 'white', fontSize: 18, fontWeight: "700"}}
-                style={styles.itemTitle}
-                key={0}
-                // `right={(props) => (
-                //   <IconButton
-                //     {...props}
-                //     icon="plus-box"
-                //     size={25}
-
-                //   />
-                // )}`
-
-              ></List.Item> */}
               {orderList.map((order, index) => (
                 <List.Item
-                  title={order.codigo}
+                  title={"#" + order.codigo}
                   style={styles.accordionItem}
                   key={index + 1}
                   onPress={() => copyCodigo(order?.codigo)}
@@ -380,8 +362,12 @@ const TrackingScreen = () => {
           </List.Section>
         </View>
       </View>
-
+      <View>
       <Text style={{ ...styles.title, marginTop: 10 }}>Seguimiento:</Text>
+        <Text style={{ ...styles.subtitle, fontStyle: "italic" }}>
+          Pegar el codigo guia para consultar
+        </Text>
+      </View>
 
       <Divider theme={{ colors: { primary: "green" } }} />
 
@@ -391,6 +377,7 @@ const TrackingScreen = () => {
         }}
         onMessage={(event) => {}}
         injectedJavaScript={runFirst}
+        onTouchStart={() => setListaExpanded(false)}
       />
       <FooterTracking />
     </View>
@@ -412,6 +399,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginHorizontal: 20,
     marginVertical: 0,
+  },
+  subtitle: {
+    color: "white",
+    fontSize: 15,
+    fontWeight: "400",
+    marginHorizontal: 20,
   },
   headerImage: {
     color: "#808080",
