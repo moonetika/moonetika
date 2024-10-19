@@ -2,7 +2,6 @@ import React from "react";
 import { View, Linking, StyleSheet, ScrollView, Image } from "react-native";
 import { Text, Button, Card, Title, Paragraph } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import MapView, { Marker } from "react-native-maps";
 import { Colors } from "../../src/constants/Colors";
 
 const ContactScreen = () => {
