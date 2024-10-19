@@ -1,7 +1,6 @@
 // import Ionicons from '@expo/vector-icons/Ionicons';
 import { Colors } from "../../src/constants/Colors";
 import {
-  Button,
   StyleSheet,
   View,
   ActivityIndicator,
@@ -12,6 +11,7 @@ import {
 import WebView from "react-native-webview";
 import Constants from "expo-constants";
 import {
+  Button,
   Dialog,
   Divider,
   Icon,
